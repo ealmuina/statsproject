@@ -1,0 +1,9 @@
+/.idea/
+/venv/
+/media/
+/static/
+/logs/
+*.sqlite3
+*.pyc
+*~
+.DS_Store

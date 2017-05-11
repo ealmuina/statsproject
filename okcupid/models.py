@@ -26,22 +26,10 @@ class UserProfile(models.Model):
     birthday = models.DateField()
     picture = models.ImageField(upload_to='profile_images')
 
-    def evaluate(self, other):
-        if other.gender not in self.liked_genders.iterator():
-            return 0
-
-        num, den = 0, 0
-        for answer in self.answer_set.iterator():
-            other_answer = other.answer_set.get(question=answer.question)
-            num += answer.weight if other_answer.value == answer.liked_value else 0
-            den += answer.weight
-
-        return 100 * num / den
-
     @staticmethod
     def match_percentage(user1, user2):
-        eval1 = user1.evaluate(user2)
-        eval2 = user2.evaluate(user1)
+        eval1 = MatchEvaluation.objects.get(evaluator=user1, evaluated=user2).value
+        eval2 = MatchEvaluation.objects.get(evaluator=user2, evaluated=user1).value
         return math.sqrt(eval1 * eval2)
 
     def __str__(self):
@@ -66,3 +54,30 @@ class Answer(models.Model):
 
     class Meta:
         unique_together = ('user', 'question')
+
+
+class MatchEvaluation(models.Model):
+    evaluator = models.ForeignKey(UserProfile, related_name='+')
+    evaluated = models.ForeignKey(UserProfile, related_name='+')
+
+    value = models.FloatField(default=0)
+
+    class Meta:
+        unique_together = ('evaluator', 'evaluated')
+
+    @staticmethod
+    def evaluate(evaluator, evaluated):
+        if evaluated.gender not in evaluator.liked_genders.iterator():
+            return 0
+
+        num, den = 0, 0
+        for answer in evaluator.answer_set.iterator():
+            other_answer = evaluated.answer_set.get(question=answer.question)
+            num += answer.weight if other_answer.value == answer.liked_value else 0
+            den += answer.weight
+
+        return 100 * num / den
+
+    def save(self, *args, **kwargs):
+        self.value = self.evaluate(self.evaluator, self.evaluated)
+        super(MatchEvaluation, self).save(*args, **kwargs)

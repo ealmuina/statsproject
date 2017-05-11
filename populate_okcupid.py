@@ -42,6 +42,8 @@ def populate():
     add_answer(hermione, q1, True, False, 1)
     add_answer(hermione, q2, False, True, 250)
 
+    make_evaluations()
+
 
 def add_answer(user, question, value, liked_value, weight):
     a = Answer.objects.get_or_create(user=user, question=question, weight=weight)[0]
@@ -64,6 +66,7 @@ def add_question(text):
 
 
 def add_user(username, first_name, last_name, birthday, gender, liked_genders, email, password):
+    # Create Django User
     u = User.objects.get_or_create(username=username)[0]
     u.first_name = first_name
     u.last_name = last_name
@@ -71,6 +74,7 @@ def add_user(username, first_name, last_name, birthday, gender, liked_genders, e
     u.set_password(password)
     u.save()
 
+    # Create UserProfile
     up = UserProfile.objects.get_or_create(user=u, gender=gender, birthday=birthday)[0]
     up.save()
     for g in liked_genders:
@@ -79,11 +83,13 @@ def add_user(username, first_name, last_name, birthday, gender, liked_genders, e
     return up
 
 
+def make_evaluations():
+    for u1 in UserProfile.objects.all():
+        for u2 in UserProfile.objects.exclude(id=u1.id):
+            MatchEvaluation.objects.get_or_create(evaluator=u1, evaluated=u2)[0].save()
+            MatchEvaluation.objects.get_or_create(evaluator=u2, evaluated=u1)[0].save()
+
+
 if __name__ == '__main__':
     print("Starting Statistics Project population script...")
     populate()
-
-    # harry = UserProfile.objects.get(user__username='harry')
-    # hermione = UserProfile.objects.get(user__username='hermione')
-    #
-    # print(UserProfile.match_percentage(harry, hermione))
