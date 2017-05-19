@@ -10,11 +10,32 @@ from okcupid.models import *
 
 
 def populate():
-    q1 = add_question('Do you like Quidditch?')
-    q2 = add_question('Are you good at defeating dark wizards?')
+    questions = [
+        'Do you smoke?',
+        'Do you enjoy discussing politics?',
+        'Is religion/God important in your life?',
+        'Does the word "carefree" describe you?',
+        'Does the word "intense" describe you?',
+        'Do you want your next relationship to last for a long time?',
+        'Do you drink alcohol?',
+        'Could you date someone who was really messy?',
+        'Do you consider "kissing in Paris" to be more romantic than "kissing in a tent, in the woods"?',
+        'Are you currently employed?',
+        'Do you consider yourself "weird" rather than "normal"?',
+        'Is jealousy healthy in a relationship?',
+        'Would you date someone who was in considerable debt?',
+        'Is astrological sign at all important in a match?',
+        'Would you strongly prefer to date someone of your own skin color / racial background?',
+        'Is a Sci-Fi Convention an event that sounds appealing to you?',
+        'Is a Political Convention an event that sounds appealing to you?',
+        'Is a Music Festival an event that sounds appealing to you?',
+        'Is a New Years Eve in Times Square an event that sounds appealing to you?',
+    ]
+    questions = [add_question(q) for q in questions]
 
     m = add_gender('Male')
     f = add_gender('Female')
+    o = add_gender('Other')
 
     harry = add_user(
         username='harry',
@@ -26,8 +47,8 @@ def populate():
         email='potter@hogwarts.co.uk',
         password='1234'
     )
-    add_answer(harry, q1, True, True, 10)
-    add_answer(harry, q2, True, True, 100)
+    add_answer(harry, questions[0], True, True, 10)
+    add_answer(harry, questions[1], True, True, 100)
 
     hermione = add_user(
         username='hermione',
@@ -39,8 +60,8 @@ def populate():
         email='hgranger@hogwarts.co.uk',
         password='1234'
     )
-    add_answer(hermione, q1, True, False, 1)
-    add_answer(hermione, q2, False, True, 250)
+    add_answer(hermione, questions[0], True, False, 1)
+    add_answer(hermione, questions[1], False, True, 250)
 
     make_evaluations()
 
