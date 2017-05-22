@@ -1,0 +1,33 @@
+{% extends 'okcupid/base.html' %}
+
+{% block content %}
+    <!--breadcrumbs start-->
+    <div class="breadcrumbs">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-4 col-sm-4">
+                    <h1>{{ title }}</h1>
+                </div>
+                <div class="col-lg-8 col-sm-8">
+                    <ol class="breadcrumb pull-right">
+                        {% for bread_crumb in bread_crumbs %}
+                            {% if forloop.last %}
+                                <li class="active">{{ bread_crumb }}</li>
+                            {% else %}
+                                <li><a href="#">{{ bread_crumb }}</a></li>
+                            {% endif %}
+                        {% endfor %}
+
+                        {#                        <li><a href="#">Home</a></li>#}
+                        {#                        <li><a href="#">Portfolio</a></li>#}
+                        {#                        <li class="active">Portfolio 4 Column</li>#}
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--breadcrumbs end-->
+
+    {% block content_info %}
+    {% endblock %}
+{% endblock %}
